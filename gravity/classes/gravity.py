@@ -1,9 +1,5 @@
-import pygame
-import random
-import time
 import numpy as np
 
-INTERVAL = 0.0005
 CONST_G = 6.674e-11
 
 def _magnitude(arr):
@@ -59,7 +55,7 @@ class Engine:
         for primary_body in self.body_list:
             temp = np.array([]).reshape((0, 3))
             for secondary_body in self.body_list:
-                if _magnitude(distance_list[primary_body[0]][secondary_body[0]]) != 0:
+                if _magnitude(distance_list[primary_body[0]][secondary_body[0]]) >= 10:
                     force = CONST_G * primary_body[1].mass * secondary_body[1].mass * (
                             1 / pow(_magnitude(distance_list[primary_body[0]][secondary_body[0]]) * 0.25, 2))
                     force = force * _unit_vector(distance_list[primary_body[0]][secondary_body[0]])
@@ -69,17 +65,6 @@ class Engine:
                         axis=0
                     )
 
-                elif _magnitude(distance_list[primary_body[0]][secondary_body[0]]) <= 5:
-                    newvel = self.calculate_collision(primary_body[1].mass, secondary_body[1].mass, 
-                                                     primary_body[1].position[0], secondary_body[1].position[0], 
-                                                     primary_body[1].vel, secondary_body[1].vel)
-                    
-                    force = (newvel * primary_body[1].mass) / INTERVAL
-                    temp = np.append(
-                        temp,
-                        force * np.array([[1, 1, 1]]),
-                        axis=0
-                    )      
                 else:
                     temp = np.append(
                         temp,
@@ -87,7 +72,6 @@ class Engine:
                         axis=0
                     ) 
 
-                    print("collision")
                     
             force_list.append(temp)
             temp = np.array([]).reshape((0, 3))

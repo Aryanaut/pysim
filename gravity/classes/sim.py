@@ -5,22 +5,29 @@ import random
 import numpy as np
 from classes.body import Body
 
-INTERVAL = 0.000001
+INTERVAL = 0.000005
 
 class Sim:
     physics_engine = Engine()
 
     def __init__(self):
         self.run, self.space, self.bodies = None, None, None
+        self.toroidal = False
+
+    def write(self, text, position, color=(255, 255, 255)):
+        font = pygame.font.SysFont("Arial", 18)        
+        text_obj = font.render(text, True, color)
+        self.space.blit(text_obj, position)
+
 
     def gen_positions(self, xLimit, yLimit):
-        return np.array([[random.randint(100, xLimit), random.randint(100, yLimit), random.randint(100, 100)]])
+        return np.array([[random.randint(100, xLimit), random.randint(100, yLimit), 0]])
 
     def gen_velocities(self, maxVel):
         return np.array([[
             random.randint(-1 * maxVel, maxVel), 
             random.randint(-1 * maxVel, maxVel), 
-            random.randint(-1 * maxVel, maxVel)]])
+            0]])
 
     def init_environment(self, bodies):
         self.bodies = bodies
@@ -49,8 +56,6 @@ class Sim:
         freeze = False
         debug = False
 
-        font = pygame.font.SysFont("Arial", 18)
-
         while self.run:
 
             for event in pygame.event.get():
@@ -61,6 +66,7 @@ class Sim:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_r:
                         self.randomize()
+
                         print("Randomizing...")
 
                     if event.key == pygame.K_f:
@@ -90,14 +96,31 @@ class Sim:
                     if len(positions) >= 2:
                         # print(positions)
                         pygame.draw.line(self.space, body.color, positions[0], positions[1])
-                        body.pixel(self.space)
                         positions[0] = positions[1]
                         positions.pop()
 
                 if debug == True:
                     current_pos = (body.position[0][0] + 10, body.position[0][1])
-                    current_force = font.render(str(body.force), True, body.color)
-                    self.space.blit(current_force, current_pos)
+                    self.write(str(body.force), current_pos)
+
+                if self.toroidal:
+                    x, y, z = (body.position[0][0], body.position[0][1], body.position[0][2])
+                    w, h = self.space.get_size()
+
+                    deltaR = 5
+                    if x > w + deltaR:
+
+                        body.position[0][0] = -deltaR
+                    if x < -deltaR:
+
+                        body.position[0][0] = w + deltaR
+                    if y > h + deltaR:
+
+                        body.position[0][1] = -deltaR
+                    if y < -deltaR:
+
+                        body.position[0][1] = h + deltaR
+
 
             for body in self.bodies:
                 if freeze:

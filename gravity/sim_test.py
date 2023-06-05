@@ -13,6 +13,7 @@ def main():
     parser = argparse.ArgumentParser(description="Three Body Problem simulation.")
     parser.add_argument("--num_bodies", dest="N", required=False)
     parser.add_argument("--filename", dest="filename", required=False)
+    parser.add_argument("--toroidal", action="store_true", dest="toroid", required=False)
     args = parser.parse_args()
 
     N = 3
@@ -30,18 +31,22 @@ def main():
 
     """
 
-    body1 = Body(np.array([[450, 350, 0]]), 6e21, (255, 255, 255))
-    body1.updateV(np.array([[random.randint(0, 100), random.randint(0, 100), random.randint(0, 100)]]))
+    body1 = Body(np.array([[400, 300, 0]]), 6e21, (255, 255, 0))
+    body1.updateV(np.array([[random.randint(-100, 100), random.randint(-100, 100), random.randint(-100, 100)]]))
 
-    body2 = Body(np.array([[500, 450, 0]]), 6e21, (255, 255, 255))
-    body2.updateV(np.array([[random.randint(0, 100), random.randint(0, 100), random.randint(0, 100)]]))
+    body2 = Body(np.array([[500, 500, 0]]), 6e21, (0, 255, 255))
+    body2.updateV(np.array([[random.randint(-100, 100), random.randint(-100, 100), random.randint(-100, 100)]]))
 
-    body3 = Body(np.array([[550, 350, 0]]), 6e21, (255, 255, 255))
-    body3.updateV(np.array([[random.randint(0, 100), random.randint(0, 100), random.randint(0, 100)]]))
+    body3 = Body(np.array([[600, 300, 0]]), 6e21, (255, 0, 255))
+    body3.updateV(np.array([[random.randint(-100, 100), random.randint(-100, 100), random.randint(-100, 100)]]))
 
     bodies = [body1, body2, body3]
 
     sim = Sim()
+
+    if args.toroid:
+        sim.toroidal = True
+
     sim.init_environment(bodies)
     sim.display_env()
 
