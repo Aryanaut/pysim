@@ -10,26 +10,18 @@ def gen_positions(xLimit, yLimit):
 
 def main():
 
-    parser = argparse.ArgumentParser(description="Three Body Problem simulation.")
-    parser.add_argument("--num_bodies", dest="N", required=False)
-    parser.add_argument("--filename", dest="filename", required=False)
+    helpStr = """
+    Controls: \n
+    r: Randomize positions and velocities.\n
+    t: Draw triangle.\n
+    p: Display force values.\n
+    f: Freeze simulation.\n
+    \nRun with --toroidal to have endless space.\n
+    """
+
+    parser = argparse.ArgumentParser(description=helpStr)
     parser.add_argument("--toroidal", action="store_true", dest="toroid", required=False)
     args = parser.parse_args()
-
-    N = 3
-    if args.N:
-        N = int(N)
-    """
-    bodies = []
-    
-    for i in range(N):
-
-        # Triangle coordinates = (450, 350), (500, 450), (550, 350)
-        temp = Body(np.array([gen_positions(1000, 800)]), 6e21, (255, 255, 255))
-        temp.updateV(np.array([[random.randint(0, 100), random.randint(0, 100), random.randint(0, 100)]]))
-        bodies.append(temp)
-
-    """
 
     body1 = Body(np.array([[400, 300, 0]]), 6e21, (255, 255, 0))
     body1.updateV(np.array([[random.randint(-100, 100), random.randint(-100, 100), random.randint(-100, 100)]]))
